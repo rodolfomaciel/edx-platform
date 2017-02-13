@@ -5,6 +5,7 @@ BlockStructures.
 from contextlib import contextmanager
 
 from openedx.core.djangoapps.content.block_structure import config
+from openedx.core.djangoapps.content.block_structure import models
 
 from .cache import BlockStructureCache
 from .factory import BlockStructureFactory
@@ -115,34 +116,32 @@ class BlockStructureManager(object):
     def _get_or_update_collected_v2(self):
         """
         """
-        # NAATODO
-        # try:
-        #     return self._get_collected_v2()
-        # except (DoesNotExist, TransformerDataIncompatible):
-        #     if config.is_enabled(config.UPDATE_WHEN_NOT_FOUND):
-        #         return self.update_collected()
-        #     else:
-        #         raise
+        try:
+            return self._get_collected_v2()
+        except (models.BlockStructure.DoesNotExist, TransformerDataIncompatible):
+            if config.is_enabled(config.UPDATE_WHEN_NOT_FOUND):
+                return self.update_collected()
+            else:
+                raise
 
     def _get_collected_v2(self):
         """
         """
-        # NAATODO
-        # structure_model = models.get_current(self.root_block_usage_key) # raises DoesNotExist
-        #
-        # try:
-        #     block_structure = BlockStructureFactory.create_from_cache(
-        #         structure_model,
-        #         self.block_structure_cache
-        #     )
-        #     BlockStructureTransformers.verify_versions(block_structure)
-        #
-        # except BlockStructureNotFound:
-        #     block_structure = BlockStructureFactory.create_from_storage(structure_model)
-        #     BlockStructureTransformers.verify_versions(block_structure)
-        #     self.block_structure_cache.add(structure_model, block_structure)
-        #
-        # return block_structure
+        structure_model = models.BlockStructure.get_current(self.root_block_usage_key) # raises DoesNotExist
+
+        try:
+            block_structure = BlockStructureFactory.create_from_cache(
+                structure_model,
+                self.block_structure_cache
+            )
+            BlockStructureTransformers.verify_versions(block_structure)
+
+        except BlockStructureNotFound:
+            block_structure = BlockStructureFactory.create_from_storage(structure_model)
+            BlockStructureTransformers.verify_versions(block_structure)
+            self.block_structure_cache.add(structure_model, block_structure)
+
+        return block_structure
 
     def update_collected(self):
         """
@@ -170,16 +169,15 @@ class BlockStructureManager(object):
     def _update_collected_v2(self):
         """
         """
-        # NAATODO
-        # block_structure = BlockStructureFactory.create_from_modulestore(
-        #     self.root_block_usage_key,
-        #     self.modulestore,
-        # )
-        # BlockStructureTransformers.collect(block_structure)
-        #
-        # structure_model = models.add(block_structure)
-        # self.block_structure_cache.add(structure_model, block_structure)
-        # return block_structure
+        block_structure = BlockStructureFactory.create_from_modulestore(
+            self.root_block_usage_key,
+            self.modulestore,
+        )
+        BlockStructureTransformers.collect(block_structure)
+
+        structure_model = models.BlockStructure.add(block_structure)
+        self.block_structure_cache.add(structure_model, block_structure)
+        return block_structure
 
     def clear(self):
         """
@@ -187,9 +185,7 @@ class BlockStructureManager(object):
         root block key.
         """
         if config.is_enabled(config.STORAGE_BACKING_FOR_CACHE):
-            # NAATODO
-            # models.delete(self.root_block_usage_key)
-            pass
+            models.BlockStructure.delete(self.root_block_usage_key)
         else:
             self.block_structure_cache.delete(self.root_block_usage_key)
 

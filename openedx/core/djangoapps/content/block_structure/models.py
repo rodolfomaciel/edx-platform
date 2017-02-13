@@ -6,23 +6,28 @@ from django.db import models
 from openedx.core.djangoapps.xmodule_django.models import UsageKeyField
 
 
+def filename_generator():
+    # TODO
+    pass
+
+
 class BlockStructure(models.Model):
     """
-
+    Model for storing Block Structure information.
     """
     data_usage_key = UsageKeyField(
-        u'Identifier of the data whose BlockStructure is created.',
+        u'Identifier of the data being collected.',
         blank=False,
         max_length=255,
         db_index=True,
     )
     data_version = models.CharField(
-        u'Version of the data.',
+        u'Version of the data at the time of collection.',
         blank=True,
         max_length=255,
     )
-    data_timestamp = models.DateTimeField(
-        u'Timestamp of when the data was edited.',
+    data_edit_timestamp = models.DateTimeField(
+        u'Edit timestamp of the data at the time of collection.',
         blank=True,
         null=True,
     )
@@ -33,7 +38,20 @@ class BlockStructure(models.Model):
         max_length=255,
     )
     block_structure_schema_version = models.CharField(
-        u'Hash of transformers versions',
+        u'Version of the block structure schema at the time of collection.',
         blank=False,
         max_length=255,
     )
+
+    collected_data = models.FileField(upload_to=filename_generator, max_length=255 # TODO defaults to 100)
+
+    @classmethod
+    def get_current(cls, data_usage_key):
+        """
+        Returns the current
+        """
+        pass
+
+    def delete(self):
+        # TODO override to delete underyling file object also
+        pass
