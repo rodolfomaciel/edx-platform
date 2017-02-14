@@ -8,7 +8,7 @@ from waffle import switch_is_active
 
 INVALIDATE_CACHE_ON_PUBLISH = u'invalidate_cache_on_publish'
 STORAGE_BACKING_FOR_CACHE = u'storage_backing_for_cache'
-UPDATE_WHEN_NOT_FOUND = u'update_when_not_found'
+RAISE_ERROR_WHEN_NOT_FOUND = u'raise_error_when_not_found'
 
 
 def is_enabled(setting_name):

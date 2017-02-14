@@ -43,14 +43,33 @@ class BlockStructure(models.Model):
         max_length=255,
     )
 
-    collected_data = models.FileField(upload_to=filename_generator, max_length=255 # TODO defaults to 100)
+    collected_data = models.FileField(
+        upload_to=filename_generator,
+        max_length=255 # TODO defaults to 100
+    )
 
     @classmethod
     def get_current(cls, data_usage_key):
         """
-        Returns the current
+        Returns the entry associated with the given data_usage_key.
         """
-        pass
+        try:
+            return cls.objects.get(data_usage_key=data_usage_key)
+        except cls.DoesNotExist:
+            raise BlockStructureNotFound
+
+    def get_collected_data(self):
+        """
+        Returns the collected data for this instance.
+        """
+        return self.collected_data.read()
+
+    @classmethod
+    def update_or_create_with_data(cls, collected_content, **kwargs):
+        """
+        """
+        cls.objects.update_or_create(**kwargs)
+
 
     def delete(self):
         # TODO override to delete underyling file object also
