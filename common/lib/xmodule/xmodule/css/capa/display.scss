@@ -933,7 +933,7 @@ div.problem .action {
   }
 
   .submit-attempt-container {
-    display: inline-block;
+    display: inline-flex;
 
     @media (max-width: $bp-screen-lg) {
       max-width: 100%;
