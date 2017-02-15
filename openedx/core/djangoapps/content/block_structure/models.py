@@ -6,11 +6,6 @@ from django.db import models
 from openedx.core.djangoapps.xmodule_django.models import UsageKeyField
 
 
-def filename_generator():
-    # TODO
-    pass
-
-
 class BlockStructure(models.Model):
     """
     Model for storing Block Structure information.
@@ -43,20 +38,14 @@ class BlockStructure(models.Model):
         max_length=255,
     )
 
-    collected_data = models.FileField(
-        upload_to=filename_generator,
-        max_length=255 # TODO defaults to 100
-    )
+    collected_data = models.FileField()
 
     @classmethod
     def get_current(cls, data_usage_key):
         """
         Returns the entry associated with the given data_usage_key.
         """
-        try:
-            return cls.objects.get(data_usage_key=data_usage_key)
-        except cls.DoesNotExist:
-            raise BlockStructureNotFound
+        return cls.objects.get(data_usage_key=data_usage_key)
 
     def get_collected_data(self):
         """
