@@ -50,15 +50,12 @@ def add_email_marketing_cookies(sender, response=None, user=None,
         'vars': {'last_login_date': datetime.datetime.now().strftime("%Y-%m-%d")}
     }
 
-    logging.warning('in add_email_marketing_cookies')
-    # get sailthru_content cookie to capture usage before logon
+    # get edx_sailthru_content cookie to capture usage before logon
     request = crum.get_current_request()
     if request:
-        sailthru_content = request.COOKIES.get('sailthru_content')
-        logging.warning('sailthru_content')
-        logging.warning(sailthru_content)
+        sailthru_content = request.COOKIES.get('edx_sailthru_content')
         if sailthru_content:
-            post_parms['cookies'] = {'sailthru_content': sailthru_content}
+            post_parms['cookies'] = {'edx_sailthru_content': sailthru_content}
 
     try:
         sailthru_client = SailthruClient(email_config.sailthru_key, email_config.sailthru_secret)
