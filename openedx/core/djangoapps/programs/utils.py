@@ -281,7 +281,10 @@ class ProgramDataExtender(object):
                 self._execute('_attach_course_run', course_run)
 
     def _attach_course_run_certificate_url(self, run_mode):
-        certificate_data = certificate_api.certificate_downloadable_status(self.user, self.course_run_key)
+        certificate_data = certificate_api.certificate_downloadable_status(
+            self.user,
+            self.course_run_key
+        ) if not self.user.is_anonymous() else {}
         certificate_uuid = certificate_data.get('uuid')
         run_mode['certificate_url'] = certificate_api.get_certificate_url(
             user_id=self.user.id,  # Providing user_id allows us to fall back to PDF certificates
@@ -317,10 +320,12 @@ class ProgramDataExtender(object):
         run_mode['advertised_start'] = self.course_overview.advertised_start
 
     def _attach_course_run_upgrade_url(self, run_mode):
-        required_mode_slug = run_mode['type']
-        enrolled_mode_slug, _ = CourseEnrollment.enrollment_mode_for_user(self.user, self.course_run_key)
-        is_mode_mismatch = required_mode_slug != enrolled_mode_slug
-        is_upgrade_required = is_mode_mismatch and CourseEnrollment.is_enrolled(self.user, self.course_run_key)
+        is_upgrade_required = None
+        if not self.user.is_anonymous():
+            required_mode_slug = run_mode['type']
+            enrolled_mode_slug, _ = CourseEnrollment.enrollment_mode_for_user(self.user, self.course_run_key)
+            is_mode_mismatch = required_mode_slug != enrolled_mode_slug
+            is_upgrade_required = is_mode_mismatch and CourseEnrollment.is_enrolled(self.user, self.course_run_key)
 
         if is_upgrade_required:
             # Requires that the ecommerce service be in use.
