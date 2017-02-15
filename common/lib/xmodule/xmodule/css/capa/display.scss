@@ -898,7 +898,11 @@ div.problem .action {
   margin-top: $baseline;
   min-height: $baseline;
   width: 100%;
-  display: inline-block;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
 
   .problem-action-buttons-wrapper {
 
