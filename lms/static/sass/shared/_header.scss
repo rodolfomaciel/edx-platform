@@ -18,7 +18,7 @@
     max-width: grid-width(12);
   }
 
-  h1.logo {
+  .logo {
     @include float(left);
     @include margin(-2px, 39px, 0, 0);
     position: relative;
@@ -386,7 +386,7 @@
     }
   }
 
-  h1.logo {
+  .logo {
     @include float(left);
     margin: -2px 39px 0 10px;
     position: relative;
